@@ -10,7 +10,7 @@ RANKING_CONFIG = {
     "item_embedding_dim": 50,
     "max_sequence_length": 50,
     "gr_output_length": 10,
-    "num_ratings": 6,
+    "num_ratings": 5,  # 5 ratings (0-4, representing original 1-5)
     "dropout_rate": 0.2,
     
     # HSTU encoder parameters

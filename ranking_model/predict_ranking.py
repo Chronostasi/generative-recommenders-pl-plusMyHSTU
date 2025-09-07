@@ -112,22 +112,22 @@ def create_sample_input(output_file="sample_input.csv"):
     # Sample data with user interaction sequences
     sample_data = [
         # User 1: likes action movies (high ratings)
-        [1, 1, 5, 100001],  # User 1, Item 1, Rating 5, Timestamp
-        [1, 2, 4, 100002],
-        [1, 3, 5, 100003],
-        [1, 4, 3, 100004],  # Last interaction to predict
+        [1, 1, 4, 100001],  # User 1, Item 1, Rating 5 -> 4, Timestamp
+        [1, 2, 3, 100002],  # Rating 4 -> 3
+        [1, 3, 4, 100003],  # Rating 5 -> 4
+        [1, 4, 2, 100004],  # Last interaction to predict (Rating 3 -> 2)
         
         # User 2: likes comedies (medium ratings)
-        [2, 10, 3, 200001],
-        [2, 11, 4, 200002], 
-        [2, 12, 3, 200003],
-        [2, 13, 4, 200004],  # Last interaction to predict
+        [2, 10, 2, 200001],  # Rating 3 -> 2
+        [2, 11, 3, 200002],  # Rating 4 -> 3
+        [2, 12, 2, 200003],  # Rating 3 -> 2
+        [2, 13, 3, 200004],  # Last interaction to predict (Rating 4 -> 3)
         
         # User 3: diverse preferences
-        [3, 20, 2, 300001],
-        [3, 21, 5, 300002],
-        [3, 22, 3, 300003],
-        [3, 23, 4, 300004],  # Last interaction to predict
+        [3, 20, 1, 300001],  # Rating 2 -> 1
+        [3, 21, 4, 300002],  # Rating 5 -> 4
+        [3, 22, 2, 300003],  # Rating 3 -> 2
+        [3, 23, 3, 300004],  # Last interaction to predict (Rating 4 -> 3)
     ]
     
     df = pd.DataFrame(sample_data, columns=['user_id', 'item_id', 'rating', 'timestamp'])
@@ -136,15 +136,15 @@ def create_sample_input(output_file="sample_input.csv"):
     return output_file
 
 
-def format_output(predictions, probabilities, sequence_info, rating_offset=1):
+def format_output(predictions, probabilities, sequence_info, rating_offset=0):
     """Format predictions into a readable DataFrame"""
     
     results = []
     
     for i in range(len(predictions)):
-        # Adjust rating back (remove offset)
-        pred_rating = predictions[i].item() - rating_offset + 1
-        true_rating = sequence_info['true_rating'][i].item() - rating_offset + 1
+        # Adjust rating back to 1-5 scale for display
+        pred_rating = predictions[i].item() + 1  # Convert 0-4 to 1-5
+        true_rating = sequence_info['true_rating'][i].item() + 1  # Convert 0-4 to 1-5
         
         # Get top-3 rating probabilities
         probs = probabilities[i].numpy()
@@ -162,7 +162,7 @@ def format_output(predictions, probabilities, sequence_info, rating_offset=1):
         
         # Add top-3 predictions with probabilities
         for j, rating_idx in enumerate(top_ratings):
-            actual_rating = rating_idx - rating_offset + 1
+            actual_rating = rating_idx + 1  # Convert 0-4 to 1-5 for display
             result[f'top_{j+1}_rating'] = actual_rating
             result[f'top_{j+1}_prob'] = probs[rating_idx]
         

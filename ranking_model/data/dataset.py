@@ -16,14 +16,14 @@ class SimpleRecoDataset(Dataset):
         ratings_df: pd.DataFrame,
         max_sequence_length: int,
         ignore_last_n: int = 0,
-        rating_offset: int = 1,  # Offset ratings to start from 1 instead of 0
+        rating_offset: int = 0,  # No offset needed - keep ratings 0-indexed for embedding
     ):
         """
         Args:
             ratings_df: DataFrame with columns ['user_id', 'item_id', 'rating', 'timestamp']
             max_sequence_length: Maximum sequence length
             ignore_last_n: Number of last interactions to ignore
-            rating_offset: Offset to add to ratings (to make them 1-indexed)
+            rating_offset: Offset to add to ratings (should be 0 for proper embedding indexing)
         """
         self.max_sequence_length = max_sequence_length
         self.rating_offset = rating_offset
